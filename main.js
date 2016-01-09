@@ -8,7 +8,8 @@ var cheerio = require('cheerio'),
     exec = require('child_process').exec,
     request = Promise.promisifyAll(require('request'), {multiArgs: true});
 
-var url = "http://apacheignite.gridgain.org";
+var url = process.argv[2];
+console.log(url);
 
 var renderResult = function (page) {
     var blocks = page.blocks;
@@ -202,12 +203,16 @@ var getLisOfSubPages = function ($) {
         var list = $(elem).next().find('a');
         list.each(function (i, link) {
             var pageInfo = {};
+
+            if($(link).attr('href').match(/http[s]?:/)) return;
+
             pageInfo['link'] = url + $(link).attr('href');
 
             pageInfo['text'] = $(link).text();
             pageInfo['paragraph'] = paragraph;
             pageInfo['addParagraph'] = addParagraph;
             addParagraph = false;
+
             return result.push(getSubPage(pageInfo));
         });
     });
@@ -215,7 +220,7 @@ var getLisOfSubPages = function ($) {
 };
 
 
-request.getAsync("http://apacheignite.gridgain.org/docs/ignite-life-cycle").spread(function (response, body) {
+request.getAsync(url + "/docs").spread(function (response, body) {
         if (response.statusCode !== 200) {
             throw new Error("Error, code: " + response.statusCode);
         }
