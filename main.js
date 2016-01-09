@@ -10,7 +10,6 @@ var cheerio = require('cheerio'),
 
 var url = "http://apacheignite.gridgain.org";
 
-
 var renderResult = function (page) {
     var blocks = page.blocks;
     var resultPage = page.templ;
